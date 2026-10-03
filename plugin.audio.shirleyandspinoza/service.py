@@ -24,6 +24,7 @@ import urllib.request
 import xbmc
 import xbmcgui
 
+from addon import drop_cached_listing
 from nowplaying import (
     ART_PROPERTY,
     VISUALISATION_WINDOW,
@@ -213,6 +214,7 @@ class StationService(xbmc.Player):
 
 
 xbmc.log("shirleyandspinoza: service started", xbmc.LOGINFO)
+drop_cached_listing()
 service = StationService()  # must stay referenced or Kodi drops the callbacks
 xbmc.Monitor().waitForAbort()
 xbmc.log("shirleyandspinoza: service stopped", xbmc.LOGINFO)

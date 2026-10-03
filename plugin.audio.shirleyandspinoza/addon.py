@@ -19,6 +19,7 @@ from urllib.parse import parse_qs, urlsplit
 import xbmc
 import xbmcgui
 import xbmcplugin
+import xbmcvfs
 
 from nowplaying import ART_PROPERTY, VISUALISATION_WINDOW, show_view
 from stations import STATIONS, status_url
@@ -27,6 +28,57 @@ from stations import STATIONS, status_url
 USER_AGENT = "Kodi/21.3 (plugin.audio.shirleyandspinoza)"
 
 PLAY_PATH = "/play"
+
+# Kodi builds a listing itself, and when that took it over a second it writes the result
+# to special://temp/archive_cache/ and serves that copy from then on -- without calling
+# the plugin again, and surviving an add-on reinstall. This listing is live: it carries
+# the current track's artwork, so a copy of it is wrong the moment it is written.
+LISTING_PATH = "plugin://plugin.audio.shirleyandspinoza"
+CACHE_DIR = "special://temp/archive_cache/"
+
+
+def cached_listing_suffix():
+    """The tail of the name Kodi gives a cached copy of our listing: a window id, a dash,
+    then the CRC32 of the lowercased path with its trailing slash stripped.
+
+    Kodi computes that CRC32 itself (xbmc/utils/Crc32.cpp): polynomial 0x04C11DB7,
+    initial value 0xFFFFFFFF, most significant bit first, and no final inversion. That is
+    not zlib's crc32, so it is spelled out here rather than imported."""
+    crc = 0xFFFFFFFF
+    for byte in LISTING_PATH.lower().encode("utf-8"):
+        crc ^= byte << 24
+        for _ in range(8):
+            crc = (
+                ((crc << 1) ^ 0x04C11DB7) & 0xFFFFFFFF
+                if crc & 0x80000000
+                else (crc << 1) & 0xFFFFFFFF
+            )
+    return "-%08x.fi" % crc
+
+
+def drop_cached_listing():
+    """Delete the cached copy of the station listing, if Kodi made one.
+
+    Called by the service at startup, and by the listing itself, so either running is
+    enough to clear a device. An add-on update restarts the service inside the running
+    session, and nothing else clears that cache: not a reinstall, and only a Kodi restart
+    clears temp. So a device already carrying a stale copy would keep serving it, and the
+    update would look like it changed nothing.
+    """
+    try:
+        files = xbmcvfs.listdir(CACHE_DIR)[1]
+    except Exception as error:
+        xbmc.log("shirleyandspinoza: listing cache unreadable: %s" % error, xbmc.LOGWARNING)
+        return
+    suffix = cached_listing_suffix()
+    found = [name for name in files if name.endswith(suffix)]
+    for name in found:
+        if not xbmcvfs.delete(CACHE_DIR + name):
+            xbmc.log("shirleyandspinoza: could not drop %s" % name, xbmc.LOGWARNING)
+    if found:
+        xbmc.log("shirleyandspinoza: listing cache dropped %s" % found, xbmc.LOGINFO)
+    else:
+        xbmc.log("shirleyandspinoza: listing cache clean", xbmc.LOGDEBUG)
 
 
 def current_artwork(station):
@@ -60,10 +112,14 @@ def playing_station():
 def station_listing(handle, base):
     """The station folder: one playable row per station."""
     playing = playing_station()
+    # Kodi will serve a cached copy of this listing without calling the plugin at all, so a
+    # stale copy from an older install can freeze the rows. Nothing should have written one
+    # -- the listing declares itself uncacheable below -- so anything found here is stale.
+    drop_cached_listing()
     if playing:
         # Already on air - this press is the way back to the now-playing screen.
         show_view(playing)
-        xbmcplugin.endOfDirectory(handle)
+        xbmcplugin.endOfDirectory(handle, cacheToDisc=False)
         return
 
     xbmcplugin.setContent(handle, "songs")
@@ -77,9 +133,15 @@ def station_listing(handle, base):
         artwork = current_artwork(station)
         if artwork:
             item.setArt({"thumb": artwork, "fanart": artwork, "poster": artwork})
+        xbmc.log(
+            "shirleyandspinoza: listing %s: art=%s" % (station["name"], artwork or "none"),
+            xbmc.LOGINFO,
+        )
         path = "%s%s?station=%s" % (base, PLAY_PATH, station["station_id"])
         xbmcplugin.addDirectoryItem(handle, path, item, isFolder=False)
-    xbmcplugin.endOfDirectory(handle)
+    # Kodi must never keep a copy of this listing: the row carries the artwork of whatever
+    # is playing now, so a cached copy is a frozen picture of an old track.
+    xbmcplugin.endOfDirectory(handle, cacheToDisc=False)
 
 
 def play(handle, station):
