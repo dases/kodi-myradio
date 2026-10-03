@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.audio.shirleyandspinoza" name="Shirley &amp; Spinoza Radio" version="0.0.1" provider-name="dases">
+  <requires>
+    <import addon="xbmc.python" version="3.0.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="addon.py">
+    <provides>audio</provides>
+  </extension>
+  <extension point="xbmc.service" library="service.py" start="startup"/>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en_GB">Shirley &amp; Spinoza Radio</summary>
+    <description lang="en_GB">Plays the Shirley &amp; Spinoza internet radio stream, with live now-playing artwork.</description>
+    <platform>all</platform>
+    <license>GPL-2.0-or-later</license>
+    <assets>
+      <icon>resources/icon.png</icon>
+      <fanart>resources/fanart.png</fanart>
+    </assets>
+  </extension>
+</addon>
