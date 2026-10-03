@@ -8,8 +8,10 @@ art, fixed when the stream was resolved -- ticket 13 measured that nothing moves
 `Player.updateInfoTag()`, not any of Kodi 21's 174 JSON-RPC methods -- and its right-hand
 cluster of buttons carries controls a live stream has no use for. Ours reads the artwork
 from the window property below instead, which the service keeps current, so the cover
-follows the tracks; its title and artist are the stream's ICY metadata; its clock is
-`Player.Time`; and its transport is two buttons.
+follows the tracks; its title and artist are the stream's ICY metadata; its elapsed
+readout is `Player.Time`; and its transport is two buttons. Its top line -- the station's
+name, and a wall clock -- stands in for the skin's top bar, which Kodi draws only while a
+seek bar or the music OSD is up, neither of which this screen uses.
 
 The service hangs the live artwork on the visualisation window's own property, the binding
 Estuary's MusicVisualisation.xml reads for the background:
@@ -18,6 +20,10 @@ Estuary's MusicVisualisation.xml reads for the background:
 
 The plugin reads the same property back when the status API cannot supply an image, so a
 failed poll keeps the last picture rather than blanking the screen.
+
+The bar's top line reads a property of ours in the same way:
+
+    $INFO[Window(Visualisation).Property(Station.Name)]
 
 The calls that raise and dismiss the screen live here rather than in the service because the
 plugin needs them too: pressing the addon while a station is on air is the way back.
@@ -31,6 +37,7 @@ import xbmcgui
 
 VISUALISATION_WINDOW = 12006
 ART_PROPERTY = "ArtistSlideshow.Image"
+STATION_PROPERTY = "Station.Name"
 
 BAR_XML = "nowplaying.xml"
 BAR_SKIN = "Default"
@@ -124,10 +131,13 @@ def clear_art():
     xbmcgui.Window(VISUALISATION_WINDOW).clearProperty(ART_PROPERTY)
 
 
-def show_view():
+def show_view(station):
     """Raise the now-playing screen: the fullscreen visualisation, then our bar over it. If
     the bar cannot be built, the skin's own music OSD still gives the track info and the
-    transport -- with the frozen cover and the buttons that come with it."""
+    transport -- with the frozen cover and the buttons that come with it. The station goes
+    onto the window first, because the bar's top line is a binding to its name."""
+    # Before the bar opens: this is what the top line reads.
+    xbmcgui.Window(VISUALISATION_WINDOW).setProperty(STATION_PROPERTY, station["name"])
     # executebuiltin queues: without wait the visualisation would be activated after our
     # dialog went up, and activating a window takes the dialog back down.
     # Close the skin's bar by name rather than with Dialog.Close(all): a close-all lands on

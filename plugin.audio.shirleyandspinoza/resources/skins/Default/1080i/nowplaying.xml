@@ -8,25 +8,52 @@
 	queue, a favourite, a share, a repeat, lyrics and settings that a live stream has no
 	use for.
 
-	Everything here is a binding, so no code in the addon pushes updates: the cover reads
-	the window property the service publishes, the clock reads Player.Time, and the title
-	and artist come from the stream's ICY metadata.
+	Everything here is a binding, so no code in the addon pushes updates: the cover and the
+	station's name read window properties the service publishes, the elapsed readout reads
+	Player.Time, the wall clock reads System.Time, and the title and artist come from the
+	stream's ICY metadata.
+
+	The line along the top is the skin's own top bar, rebuilt here. Kodi draws
+	Custom_1109_TopBarOverlay.xml - the station, the now playing item and the wall clock -
+	only while its seek bar or its music OSD is up. Ours is neither, which is why the line
+	went missing when this window replaced the OSD.
 -->
 <window type="dialog">
 	<defaultcontrol>900</defaultcontrol>
 	<controls>
-		<!-- Clicking off the bar dismisses it. Playback carries on behind. -->
-		<control type="button" id="899">
-			<description>dismiss area</description>
+		<!-- Clicking off the bar dismisses it. Playback carries on behind. Listed last, so it
+		     is the topmost thing drawn across its area: over the top line, the cover and the
+		     transport, rather than under them. -->
+
+		<!-- The scrim and the two labels of the top line. Same texture and same height as
+		     the layer the skin's top bar draws for this. -->
+		<control type="image">
 			<left>0</left>
 			<top>0</top>
-			<width>1920</width>
-			<bottom>120</bottom>
-			<label></label>
-			<font></font>
-			<texturefocus />
-			<texturenofocus />
-			<ondown>900</ondown>
+			<width>100%</width>
+			<height>170</height>
+			<texture>frame/osdfade.png</texture>
+		</control>
+		<control type="label">
+			<left>25</left>
+			<top>6</top>
+			<width>900</width>
+			<height>60</height>
+			<aligny>center</aligny>
+			<label>$INFO[Window(12006).Property(Station.Name)]</label>
+			<font>font30_title</font>
+			<shadowcolor>black</shadowcolor>
+		</control>
+		<control type="label">
+			<right>25</right>
+			<top>6</top>
+			<width>600</width>
+			<height>60</height>
+			<align>right</align>
+			<aligny>center</aligny>
+			<label>$INFO[System.Time]</label>
+			<font>font_clock</font>
+			<shadowcolor>black</shadowcolor>
 		</control>
 
 		<!-- The scrim the skin draws behind its own track bar. -->
@@ -155,6 +182,18 @@
 			<width>74</width>
 			<height>74</height>
 			<texture colordiffuse="white">osd/fullscreen/buttons/stop.png</texture>
+		</control>
+		<control type="button" id="899">
+			<description>dismiss area</description>
+			<left>0</left>
+			<top>0</top>
+			<width>1920</width>
+			<bottom>120</bottom>
+			<label></label>
+			<font></font>
+			<texturefocus />
+			<texturenofocus />
+			<ondown>900</ondown>
 		</control>
 	</controls>
 </window>

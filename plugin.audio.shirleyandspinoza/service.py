@@ -148,7 +148,7 @@ class StationService(xbmc.Player):
                         if self.isPlaying():
                             with self.lock:
                                 self.view_shown = True
-                            show_view()
+                            show_view(station)
                             self.last_poll = time.time()
                             self.refresh_artwork(station)
                     else:

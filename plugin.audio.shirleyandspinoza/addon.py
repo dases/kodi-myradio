@@ -59,9 +59,10 @@ def playing_station():
 
 def station_listing(handle, base):
     """The station folder: one playable row per station."""
-    if playing_station():
+    playing = playing_station()
+    if playing:
         # Already on air - this press is the way back to the now-playing screen.
-        show_view()
+        show_view(playing)
         xbmcplugin.endOfDirectory(handle)
         return
 
