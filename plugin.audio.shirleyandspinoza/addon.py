@@ -20,7 +20,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 
-from nowplaying import ART_PROPERTY, VISUALISATION_WINDOW
+from nowplaying import ART_PROPERTY, VISUALISATION_WINDOW, show_view
 from stations import STATIONS, status_url
 
 # radio.co's status API answers 403 to Python's default urllib user-agent.
@@ -61,10 +61,7 @@ def station_listing(handle, base):
     """The station folder: one playable row per station."""
     if playing_station():
         # Already on air - this press is the way back to the now-playing screen.
-        # A modal dialog (a stuck Music OSD, for instance) silently refuses the
-        # activation, so clear the way first.
-        xbmc.executebuiltin("Dialog.Close(all, true)")
-        xbmc.executebuiltin("ActivateWindow(Visualisation)")
+        show_view()
         xbmcplugin.endOfDirectory(handle)
         return
 

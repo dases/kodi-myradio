@@ -24,7 +24,7 @@ import urllib.request
 import xbmc
 import xbmcgui
 
-from nowplaying import ART_PROPERTY, VISUALISATION_WINDOW
+from nowplaying import ART_PROPERTY, VISUALISATION_WINDOW, leave_view, show_view
 from stations import STATIONS, status_url
 
 POLL_SECONDS = 15
@@ -48,13 +48,6 @@ def station_for(playing_file):
         if station["stream"] == playing_file:
             return station
     return None
-
-
-def show_view():
-    # A modal dialog (a stuck Music OSD, for instance) silently refuses the
-    # activation, so clear the way first.
-    xbmc.executebuiltin("Dialog.Close(all, true)")
-    xbmc.executebuiltin("ActivateWindow(Visualisation)")
 
 
 def fetch_artwork(station):
@@ -185,7 +178,7 @@ class StationService(xbmc.Player):
             self.state = IDLE
         xbmc.log("shirleyandspinoza: gave up on the stream", xbmc.LOGWARNING)
         if xbmc.getCondVisibility("Window.IsActive(Visualisation)"):
-            xbmc.executebuiltin("ActivateWindow(Home)")
+            leave_view()
         xbmcgui.Dialog().notification(
             station["name"], "Stream lost", xbmcgui.NOTIFICATION_WARNING
         )
