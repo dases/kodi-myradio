@@ -70,6 +70,10 @@ def station_listing(handle, base):
     for station in STATIONS:
         item = xbmcgui.ListItem(label=station["name"], offscreen=True)
         item.setProperty("IsPlayable", "true")
+        # Kodi's music info has no plot key -- setInfo("music", ...) logs and drops it -- so
+        # the station's line goes on the video info tag, which is where Listitem.Plot reads
+        # from. No media type goes with it, so the row stays a station, not a video.
+        item.getVideoInfoTag().setPlot("%s\n%s" % (station["tagline"], station["site"]))
         artwork = current_artwork(station)
         if artwork:
             item.setArt({"thumb": artwork, "fanart": artwork, "poster": artwork})
