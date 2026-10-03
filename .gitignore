@@ -1,2 +1,5 @@
 # Wayfinder working notes for this effort — kept locally, never published
 .scratch/
+
+# Python byproducts from importing the addon's modules outside Kodi
+__pycache__/
