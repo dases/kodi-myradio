@@ -24,7 +24,15 @@ import urllib.request
 import xbmc
 import xbmcgui
 
-from nowplaying import ART_PROPERTY, VISUALISATION_WINDOW, leave_view, show_view
+from nowplaying import (
+    ART_PROPERTY,
+    VISUALISATION_WINDOW,
+    bar_open,
+    clear_art,
+    close_bar,
+    leave_view,
+    show_view,
+)
 from stations import STATIONS, status_url
 
 POLL_SECONDS = 15
@@ -107,8 +115,11 @@ class StationService(xbmc.Player):
             died = self.ended
             self.ended = False
             if not died:
-                # A stop someone asked for: the station stays off.
+                # A stop someone asked for: the station stays off, and our bar goes with it.
                 self.state = IDLE
+        if not died:
+            close_bar()
+            clear_art()
 
     def stream_died(self):
         """The stream ended or errored. A reconnect attempt of ours that fails to open
@@ -140,15 +151,31 @@ class StationService(xbmc.Player):
                             show_view()
                             self.last_poll = time.time()
                             self.refresh_artwork(station)
-                    elif time.time() - self.last_poll >= POLL_SECONDS:
-                        self.last_poll = time.time()
-                        self.refresh_artwork(station)
+                    else:
+                        self.hide_skin_bar()
+                        if time.time() - self.last_poll >= POLL_SECONDS:
+                            self.last_poll = time.time()
+                            self.refresh_artwork(station)
                 elif state == RECONNECTING:
                     self.reconnect(station)
             except Exception as error:
                 xbmc.log("shirleyandspinoza: service tick failed: %s" % error, xbmc.LOGERROR)
             if monitor.waitForAbort(1):
                 return
+
+    def hide_skin_bar(self):
+        """The skin's own track panel shows itself for a few seconds at every track change,
+        drawn where ours is. Ours is the one that should be seen, so dismiss the skin's as
+        soon as it appears."""
+        if not bar_open():
+            return
+        if xbmc.getCondVisibility("Player.ShowInfo"):
+            xbmc.executebuiltin("Action(Info)")
+        # The Info action does not always toggle the panel off. When the skin has just
+        # raised its music OSD, the action activates that dialog instead, and the OSD
+        # covers our bar for as long as it is up.
+        if xbmc.getCondVisibility("Window.IsActive(MusicOSD)"):
+            xbmc.executebuiltin("Dialog.Close(MusicOSD)")
 
     def refresh_artwork(self, station):
         url = fetch_artwork(station)
@@ -177,6 +204,7 @@ class StationService(xbmc.Player):
         with self.lock:
             self.state = IDLE
         xbmc.log("shirleyandspinoza: gave up on the stream", xbmc.LOGWARNING)
+        clear_art()
         if xbmc.getCondVisibility("Window.IsActive(Visualisation)"):
             leave_view()
         xbmcgui.Dialog().notification(

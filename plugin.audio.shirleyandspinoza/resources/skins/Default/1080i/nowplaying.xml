@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	The addon's own now-playing bar, drawn as a dialog over the fullscreen visualisation.
+
+	It exists because the skin's own bar cannot be fixed. The cover it draws is the playing
+	item's own art, frozen when the stream was resolved - no API in Kodi 21 moves it (see
+	the map's ticket 13) - and its right-hand control cluster is the skin's, carrying a
+	queue, a favourite, a share, a repeat, lyrics and settings that a live stream has no
+	use for.
+
+	Everything here is a binding, so no code in the addon pushes updates: the cover reads
+	the window property the service publishes, the clock reads Player.Time, and the title
+	and artist come from the stream's ICY metadata.
+-->
+<window type="dialog">
+	<defaultcontrol>900</defaultcontrol>
+	<controls>
+		<!-- Clicking off the bar dismisses it. Playback carries on behind. -->
+		<control type="button" id="899">
+			<description>dismiss area</description>
+			<left>0</left>
+			<top>0</top>
+			<width>1920</width>
+			<bottom>120</bottom>
+			<label></label>
+			<font></font>
+			<texturefocus />
+			<texturenofocus />
+			<ondown>900</ondown>
+		</control>
+
+		<!-- The scrim the skin draws behind its own track bar. -->
+		<control type="image">
+			<left>0</left>
+			<bottom>0</bottom>
+			<width>1920</width>
+			<height>280</height>
+			<texture colordiffuse="80FFFFFF">dialogs/dialog-bg-nobo.png</texture>
+		</control>
+
+		<!-- Cover. The service's artwork is the source; the item's own art is only right up
+		     to the first track change, so it is the fallback rather than the other way
+		     round. -->
+		<control type="image">
+			<left>20</left>
+			<top>480</top>
+			<width>400</width>
+			<height>400</height>
+			<fadetime>400</fadetime>
+			<aspectratio aligny="bottom">keep</aspectratio>
+			<texture fallback="DefaultAlbumCover.png" border="2">$INFO[Window(12006).Property(ArtistSlideshow.Image)]</texture>
+			<bordertexture colordiffuse="border_alpha">colors/black.png</bordertexture>
+			<bordersize>4</bordersize>
+			<visible>!String.IsEmpty(Window(12006).Property(ArtistSlideshow.Image))</visible>
+		</control>
+		<control type="image">
+			<left>20</left>
+			<top>480</top>
+			<width>400</width>
+			<height>400</height>
+			<fadetime>400</fadetime>
+			<aspectratio aligny="bottom">keep</aspectratio>
+			<texture fallback="DefaultAlbumCover.png" border="2">$INFO[MusicPlayer.Cover]</texture>
+			<bordertexture colordiffuse="border_alpha">colors/black.png</bordertexture>
+			<bordersize>4</bordersize>
+			<visible>String.IsEmpty(Window(12006).Property(ArtistSlideshow.Image))</visible>
+		</control>
+
+		<control type="label">
+			<left>440</left>
+			<top>630</top>
+			<width>1450</width>
+			<height>50</height>
+			<aligny>center</aligny>
+			<label>[B]$INFO[Player.Title][/B]</label>
+			<font>font45</font>
+			<shadowcolor>black</shadowcolor>
+			<scroll>true</scroll>
+		</control>
+		<control type="label">
+			<left>440</left>
+			<top>685</top>
+			<width>1450</width>
+			<height>50</height>
+			<aligny>center</aligny>
+			<label>$INFO[MusicPlayer.Artist]</label>
+			<font>font45</font>
+			<shadowcolor>black</shadowcolor>
+			<scroll>true</scroll>
+		</control>
+
+		<!-- Elapsed time. The stream has no duration and no seeking, so this is all of it. -->
+		<control type="label">
+			<left>460</left>
+			<top>985</top>
+			<width>1000</width>
+			<height>75</height>
+			<align>center</align>
+			<aligny>center</aligny>
+			<label>$INFO[Player.Time]</label>
+			<font>font37</font>
+			<shadowcolor>black</shadowcolor>
+		</control>
+
+		<!-- Transport: play/pause and stop. It used to be the whole skin bar. -->
+		<control type="button" id="900">
+			<left>20</left>
+			<top>990</top>
+			<width>74</width>
+			<height>74</height>
+			<label></label>
+			<font></font>
+			<texturefocus colordiffuse="button_focus">osd/fullscreen/buttons/button-fo.png</texturefocus>
+			<texturenofocus />
+			<onleft>noop</onleft>
+			<onright>901</onright>
+			<onup>899</onup>
+			<ondown>noop</ondown>
+		</control>
+		<!-- Estuary names these after the action, not the picture: pause.png is the
+		     "pause this" bars shown while playing, play.png the "resume" triangle. -->
+		<control type="image">
+			<left>20</left>
+			<top>990</top>
+			<width>74</width>
+			<height>74</height>
+			<texture colordiffuse="white">osd/fullscreen/buttons/pause.png</texture>
+			<visible>!Player.Paused</visible>
+		</control>
+		<control type="image">
+			<left>20</left>
+			<top>990</top>
+			<width>74</width>
+			<height>74</height>
+			<texture colordiffuse="white">osd/fullscreen/buttons/play.png</texture>
+			<visible>Player.Paused</visible>
+		</control>
+		<control type="button" id="901">
+			<left>106</left>
+			<top>990</top>
+			<width>74</width>
+			<height>74</height>
+			<label></label>
+			<font></font>
+			<texturefocus colordiffuse="button_focus">osd/fullscreen/buttons/button-fo.png</texturefocus>
+			<texturenofocus />
+			<onleft>900</onleft>
+			<onright>noop</onright>
+			<onup>899</onup>
+			<ondown>noop</ondown>
+		</control>
+		<control type="image">
+			<left>106</left>
+			<top>990</top>
+			<width>74</width>
+			<height>74</height>
+			<texture colordiffuse="white">osd/fullscreen/buttons/stop.png</texture>
+		</control>
+	</controls>
+</window>
