@@ -56,20 +56,14 @@
 			<shadowcolor>black</shadowcolor>
 		</control>
 
-		<!-- The band behind the track, and the extra shade it carries where the song title
-		     shows. The band on its own is the skin's own shade of dark and is the same all
-		     the way across; the title and artist get a soft-edged extra laid over it, so the
-		     white text has something to sit against without the whole band going black. The
-		     addon ships this texture because the skin's own for the job is only partly
-		     opaque, which over a bright visualisation left the text short of contrast. The
-		     path arrives as a window property, since an addon cannot name its own textures
-		     from its skin XML. -->
+		<!-- The scrim the skin draws behind its own track bar. The title and artist carry
+		     their own outline, so this only has to be the shade the rest of the skin uses. -->
 		<control type="image">
 			<left>0</left>
 			<bottom>0</bottom>
 			<width>1920</width>
 			<height>280</height>
-			<texture fallback="colors/black.png">$INFO[Window(12006).Property(Scrim.Texture)]</texture>
+			<texture colordiffuse="E0FFFFFF">dialogs/dialog-bg-nobo.png</texture>
 		</control>
 
 		<!-- Cover. The service's artwork is the source; the item's own art is only right up
@@ -100,8 +94,54 @@
 			<visible>String.IsEmpty(Window(12006).Property(ArtistSlideshow.Image))</visible>
 		</control>
 
-		<!-- Inside the scrim band, not above it: over a bright visualisation the title and
-		     artist had nothing behind them to read against. -->
+		<!-- The title and artist are drawn five times over: four black copies offset by a
+		     couple of pixels into each diagonal, then the white one on top. Outlining the
+		     glyphs this way costs nothing and reads over any artwork, unlike anything laid
+		     behind them, which has to agree with where the font actually lands. -->
+		<control type="label">
+			<left>438</left>
+			<top>818</top>
+			<width>1450</width>
+			<height>50</height>
+			<aligny>center</aligny>
+			<label>[B]$INFO[Player.Title][/B]</label>
+			<font>font45</font>
+			<textcolor>black</textcolor>
+			<scroll>true</scroll>
+		</control>
+		<control type="label">
+			<left>442</left>
+			<top>818</top>
+			<width>1450</width>
+			<height>50</height>
+			<aligny>center</aligny>
+			<label>[B]$INFO[Player.Title][/B]</label>
+			<font>font45</font>
+			<textcolor>black</textcolor>
+			<scroll>true</scroll>
+		</control>
+		<control type="label">
+			<left>438</left>
+			<top>822</top>
+			<width>1450</width>
+			<height>50</height>
+			<aligny>center</aligny>
+			<label>[B]$INFO[Player.Title][/B]</label>
+			<font>font45</font>
+			<textcolor>black</textcolor>
+			<scroll>true</scroll>
+		</control>
+		<control type="label">
+			<left>442</left>
+			<top>822</top>
+			<width>1450</width>
+			<height>50</height>
+			<aligny>center</aligny>
+			<label>[B]$INFO[Player.Title][/B]</label>
+			<font>font45</font>
+			<textcolor>black</textcolor>
+			<scroll>true</scroll>
+		</control>
 		<control type="label">
 			<left>440</left>
 			<top>820</top>
@@ -111,6 +151,50 @@
 			<label>[B]$INFO[Player.Title][/B]</label>
 			<font>font45</font>
 			<shadowcolor>black</shadowcolor>
+			<scroll>true</scroll>
+		</control>
+		<control type="label">
+			<left>438</left>
+			<top>873</top>
+			<width>1450</width>
+			<height>50</height>
+			<aligny>center</aligny>
+			<label>$INFO[MusicPlayer.Artist]</label>
+			<font>font45</font>
+			<textcolor>black</textcolor>
+			<scroll>true</scroll>
+		</control>
+		<control type="label">
+			<left>442</left>
+			<top>873</top>
+			<width>1450</width>
+			<height>50</height>
+			<aligny>center</aligny>
+			<label>$INFO[MusicPlayer.Artist]</label>
+			<font>font45</font>
+			<textcolor>black</textcolor>
+			<scroll>true</scroll>
+		</control>
+		<control type="label">
+			<left>438</left>
+			<top>877</top>
+			<width>1450</width>
+			<height>50</height>
+			<aligny>center</aligny>
+			<label>$INFO[MusicPlayer.Artist]</label>
+			<font>font45</font>
+			<textcolor>black</textcolor>
+			<scroll>true</scroll>
+		</control>
+		<control type="label">
+			<left>442</left>
+			<top>877</top>
+			<width>1450</width>
+			<height>50</height>
+			<aligny>center</aligny>
+			<label>$INFO[MusicPlayer.Artist]</label>
+			<font>font45</font>
+			<textcolor>black</textcolor>
 			<scroll>true</scroll>
 		</control>
 		<control type="label">
