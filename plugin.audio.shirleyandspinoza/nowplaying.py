@@ -29,6 +29,7 @@ The calls that raise and dismiss the screen live here rather than in the service
 plugin needs them too: pressing the addon while a station is on air is the way back.
 """
 
+import os
 import threading
 
 import xbmc
@@ -38,10 +39,17 @@ import xbmcgui
 VISUALISATION_WINDOW = 12006
 ART_PROPERTY = "ArtistSlideshow.Image"
 STATION_PROPERTY = "Station.Name"
+SCRIM_PROPERTY = "Scrim.Texture"
 
 BAR_XML = "nowplaying.xml"
 BAR_SKIN = "Default"
 BAR_RES = "1080i"
+
+# The addon's own band texture. Skin XML cannot name an addon's own files, so the path
+# travels to the window as a property (set in show_view, before the bar is built).
+SCRIM_TEXTURE = os.path.join(
+    xbmcaddon.Addon().getAddonInfo("path"), "resources", "nowplaying-scrim.png"
+)
 
 # Control ids in nowplaying.xml.
 DISMISS = 899
@@ -136,8 +144,10 @@ def show_view(station):
     the bar cannot be built, the skin's own music OSD still gives the track info and the
     transport -- with the frozen cover and the buttons that come with it. The station goes
     onto the window first, because the bar's top line is a binding to its name."""
-    # Before the bar opens: this is what the top line reads.
-    xbmcgui.Window(VISUALISATION_WINDOW).setProperty(STATION_PROPERTY, station["name"])
+    # Before the bar opens: these are the bindings its window reads.
+    view = xbmcgui.Window(VISUALISATION_WINDOW)
+    view.setProperty(STATION_PROPERTY, station["name"])
+    view.setProperty(SCRIM_PROPERTY, SCRIM_TEXTURE)
     # executebuiltin queues: without wait the visualisation would be activated after our
     # dialog went up, and activating a window takes the dialog back down.
     # Close the skin's bar by name rather than with Dialog.Close(all): a close-all lands on
