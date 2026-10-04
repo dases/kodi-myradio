@@ -93,9 +93,11 @@
 			<visible>String.IsEmpty(Window(12006).Property(ArtistSlideshow.Image))</visible>
 		</control>
 
+		<!-- Inside the scrim band, not above it: over a bright visualisation the title and
+		     artist had nothing behind them to read against. -->
 		<control type="label">
 			<left>440</left>
-			<top>630</top>
+			<top>820</top>
 			<width>1450</width>
 			<height>50</height>
 			<aligny>center</aligny>
@@ -106,7 +108,7 @@
 		</control>
 		<control type="label">
 			<left>440</left>
-			<top>685</top>
+			<top>875</top>
 			<width>1450</width>
 			<height>50</height>
 			<aligny>center</aligny>
