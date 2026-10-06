@@ -56,8 +56,8 @@
 			<shadowcolor>black</shadowcolor>
 		</control>
 
-		<!-- The scrim the skin draws behind its own track bar. The title and artist carry
-		     their own outline, so this only has to be the shade the rest of the skin uses. -->
+		<!-- The scrim the skin draws behind its own track bar. The title and artist sit on
+		     their own plate, so this only has to be the shade the rest of the skin uses. -->
 		<control type="image">
 			<left>0</left>
 			<bottom>0</bottom>
@@ -94,117 +94,63 @@
 			<visible>String.IsEmpty(Window(12006).Property(ArtistSlideshow.Image))</visible>
 		</control>
 
-		<!-- The title and artist are drawn five times over: four black copies offset by a
-		     couple of pixels into each diagonal, then the white one on top. Outlining the
-		     glyphs this way costs nothing and reads over any artwork, unlike anything laid
-		     behind them, which has to agree with where the font actually lands. -->
-		<control type="label">
-			<left>438</left>
-			<top>818</top>
-			<width>1450</width>
-			<height>50</height>
-			<aligny>center</aligny>
-			<label>[B]$INFO[Player.Title][/B]</label>
-			<font>font45</font>
-			<textcolor>black</textcolor>
-			<scroll>true</scroll>
-		</control>
-		<control type="label">
-			<left>442</left>
-			<top>818</top>
-			<width>1450</width>
-			<height>50</height>
-			<aligny>center</aligny>
-			<label>[B]$INFO[Player.Title][/B]</label>
-			<font>font45</font>
-			<textcolor>black</textcolor>
-			<scroll>true</scroll>
-		</control>
-		<control type="label">
-			<left>438</left>
-			<top>822</top>
-			<width>1450</width>
-			<height>50</height>
-			<aligny>center</aligny>
-			<label>[B]$INFO[Player.Title][/B]</label>
-			<font>font45</font>
-			<textcolor>black</textcolor>
-			<scroll>true</scroll>
-		</control>
-		<control type="label">
-			<left>442</left>
-			<top>822</top>
-			<width>1450</width>
-			<height>50</height>
-			<aligny>center</aligny>
-			<label>[B]$INFO[Player.Title][/B]</label>
-			<font>font45</font>
-			<textcolor>black</textcolor>
-			<scroll>true</scroll>
-		</control>
-		<control type="label">
+		<!-- The title and artist sit on a plate only as wide as the text. A label cannot draw
+		     a background, and a button cannot scroll, so each line is two controls: a button
+		     whose own text is invisible and exists only to size the plate to the whole
+		     caption, under a label that draws the text and scrolls when the title is long. -->
+		<control type="button" id="910">
 			<left>440</left>
-			<top>820</top>
-			<width>1450</width>
-			<height>50</height>
+			<top>815</top>
+			<width min="0" max="1470">auto</width>
+			<height>60</height>
+			<align>center</align>
 			<aligny>center</aligny>
-			<label>[B]$INFO[Player.Title][/B]</label>
+			<textoffsetx>20</textoffsetx>
 			<font>font45</font>
+			<textcolor>00FFFFFF</textcolor>
+			<focusedcolor>00FFFFFF</focusedcolor>
+			<disabledcolor>00FFFFFF</disabledcolor>
+			<label>[B]$INFO[Player.Title][/B]</label>
+			<texturefocus colordiffuse="90000000">colors/black.png</texturefocus>
+			<texturenofocus colordiffuse="90000000">colors/black.png</texturenofocus>
+		</control>
+		<control type="label">
+			<left>460</left>
+			<top>815</top>
+			<width>1450</width>
+			<height>60</height>
+			<aligny>center</aligny>
+			<font>font45</font>
+			<label>[B]$INFO[Player.Title][/B]</label>
 			<shadowcolor>black</shadowcolor>
 			<scroll>true</scroll>
 		</control>
-		<control type="label">
-			<left>438</left>
-			<top>873</top>
-			<width>1450</width>
-			<height>50</height>
-			<aligny>center</aligny>
-			<label>$INFO[MusicPlayer.Artist]</label>
-			<font>font45</font>
-			<textcolor>black</textcolor>
-			<scroll>true</scroll>
-		</control>
-		<control type="label">
-			<left>442</left>
-			<top>873</top>
-			<width>1450</width>
-			<height>50</height>
-			<aligny>center</aligny>
-			<label>$INFO[MusicPlayer.Artist]</label>
-			<font>font45</font>
-			<textcolor>black</textcolor>
-			<scroll>true</scroll>
-		</control>
-		<control type="label">
-			<left>438</left>
-			<top>877</top>
-			<width>1450</width>
-			<height>50</height>
-			<aligny>center</aligny>
-			<label>$INFO[MusicPlayer.Artist]</label>
-			<font>font45</font>
-			<textcolor>black</textcolor>
-			<scroll>true</scroll>
-		</control>
-		<control type="label">
-			<left>442</left>
-			<top>877</top>
-			<width>1450</width>
-			<height>50</height>
-			<aligny>center</aligny>
-			<label>$INFO[MusicPlayer.Artist]</label>
-			<font>font45</font>
-			<textcolor>black</textcolor>
-			<scroll>true</scroll>
-		</control>
-		<control type="label">
+		<control type="button" id="911">
 			<left>440</left>
 			<top>875</top>
-			<width>1450</width>
-			<height>50</height>
+			<width min="0" max="1470">auto</width>
+			<height>60</height>
+			<align>center</align>
 			<aligny>center</aligny>
-			<label>$INFO[MusicPlayer.Artist]</label>
+			<textoffsetx>20</textoffsetx>
 			<font>font45</font>
+			<textcolor>00FFFFFF</textcolor>
+			<focusedcolor>00FFFFFF</focusedcolor>
+			<disabledcolor>00FFFFFF</disabledcolor>
+			<label>$INFO[MusicPlayer.Artist]</label>
+			<visible>!String.IsEmpty(MusicPlayer.Artist)</visible>
+			<texturefocus colordiffuse="90000000">colors/black.png</texturefocus>
+			<texturenofocus colordiffuse="90000000">colors/black.png</texturenofocus>
+		</control>
+		<control type="label">
+			<left>460</left>
+			<top>875</top>
+			<width>1450</width>
+			<height>60</height>
+			<aligny>center</aligny>
+			<font>font45</font>
+			<label>$INFO[MusicPlayer.Artist]</label>
+			<visible>!String.IsEmpty(MusicPlayer.Artist)</visible>
 			<shadowcolor>black</shadowcolor>
 			<scroll>true</scroll>
 		</control>
