@@ -30,3 +30,7 @@ Install the newer zip the same way. The add-on id (`plugin.audio.shirleyandspino
 not change between releases, so the new build overwrites the old one in place — no
 uninstall first. Only an id change would force one.
 
+## About
+
+This project is just me scratching an itch and is not associated with s&S radio.
+If you use this, please support the show over at https://www.shirleyandspinoza.radio/ 
